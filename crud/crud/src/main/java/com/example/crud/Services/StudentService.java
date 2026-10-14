@@ -42,6 +42,23 @@ public class StudentService {
         return existing;
     }
 
+    public Student patch(Long id, Student incomming){
+        Student existing = getById(id);
+
+        if(incomming.getName() != null){
+            existing.setName(incomming.getName());
+        }
+        if(incomming.getEmail() != null){
+            existing.setEmail(incomming.getEmail());
+        }
+        if(incomming.getAge() != null){
+            existing.setAge(incomming.getAge());
+        }
+
+        return existing;
+    }
+
+
     @Transactional
     public void delete(Long id){
         Student existing = getById(id);
