@@ -1,17 +1,18 @@
 package com.example.crud.Services;
 
 import com.example.crud.Entity.Student;
-import com.example.crud.Repository.SrudentRepository;
-import jakarta.transaction.Transactional;
+import com.example.crud.Exceptions.StudentNotFoundException;
+import com.example.crud.Repository.StudentRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class StudentService {
-    private final SrudentRepository repo;
+    private final StudentRepository repo;
 
-    public StudentService(SrudentRepository repo){
+    public StudentService(StudentRepository repo){
         this.repo=repo;
     }
 
@@ -20,7 +21,30 @@ public class StudentService {
         return repo.save(student);
     }
 
+    @Transactional(readOnly = true)
     public List<Student> getAll(){
         return repo.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Student getById(Long id){
+        return  repo.findById(id)
+                .orElseThrow(()->new StudentNotFoundException(id));
+    }
+
+    @Transactional
+    public  Student update(Long id, Student incoming){
+        Student existing = getById(id);
+        existing.setName(incoming.getName());
+        existing.setAge(incoming.getAge());
+        existing.setEmail(incoming.getEmail());
+
+        return existing;
+    }
+
+    @Transactional
+    public void delete(Long id){
+        Student existing = getById(id);
+        repo.delete(existing);
     }
 }
