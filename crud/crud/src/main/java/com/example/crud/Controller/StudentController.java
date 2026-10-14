@@ -43,6 +43,10 @@ public class StudentController {
         return studentService.update(id, student);
     }
 
+    public Student patch(@PathVariable Long id, @RequestBody Student student){
+        return studentService.patch(id, student);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){
