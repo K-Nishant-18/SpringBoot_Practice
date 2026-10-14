@@ -43,6 +43,7 @@ public class StudentController {
         return studentService.update(id, student);
     }
 
+    @PatchMapping("/{id}")
     public Student patch(@PathVariable Long id, @RequestBody Student student){
         return studentService.patch(id, student);
     }
