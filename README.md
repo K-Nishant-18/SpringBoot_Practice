@@ -1,186 +1,193 @@
-# Student Management REST API
+# 🎓 Student CRUD API (Spring Boot)
 
-A learning project demonstrating a layered REST API built with **Java 21**, **Spring Boot 3.2.4**, **Spring Web**, **Spring Data JPA**, **Hibernate**, and an **H2 in-memory database**. The API supports creating, retrieving, updating, partially updating, and deleting student records. Interactive API documentation is provided by **Springdoc OpenAPI / Swagger UI**.
+A beginner-friendly **REST API** built with **Spring Boot 3.2.4**, **Spring Data JPA** and the **H2 in-memory database**. It performs full **CRUD** (Create, Read, Update, Delete) on students, plus **PATCH** for partial updates.
 
-> This repository is a practice project, not a production-ready service. Read the limitations section before using it as a production template.
+> Built as a hands-on practice project while learning Spring Boot: layered architecture, dependency injection, transactions and REST conventions.
 
-## Features
 
-- RESTful CRUD endpoints for students.
-- Partial updates with `PATCH` (non-null request fields are applied).
-- Layered architecture: Controller → Service → Repository.
-- Constructor-based dependency injection.
-- Transaction annotations in the service layer.
-- Custom `StudentNotFoundException` mapped to HTTP `404`.
-- `201 Created` with a `Location` header when a student is created.
-- `204 No Content` on successful deletion.
-- Automatically generated OpenAPI documentation and Swagger UI.
-- H2 in-memory database for local practice with no database server installation.
+---
 
-## Tech stack
+## ✨ Features
+
+- Full CRUD on a `Student` resource
+- **PATCH** support for partial updates (only the fields you send are changed)
+- Clean **Controller → Service → Repository** layering
+- Constructor-based **dependency injection**
+- Declarative transactions with `@Transactional`
+- Proper HTTP status codes (`201`, `204`, `404`, ...)
+- Custom exception mapped to `404 Not Found`
+- Zero setup database (H2 in-memory), with the SQL printed in the console
+
+---
+
+## 🛠 Tech Stack
 
 | Technology | Purpose |
 |---|---|
-| Java 21 | Language (configured in Maven) |
+| Java 22 (17+ works) | Language |
 | Spring Boot 3.2.4 | Application framework |
-| Spring Web MVC | REST endpoints and JSON handling |
-| Spring Data JPA / Hibernate | Persistence and ORM |
+| Spring Web (MVC) | REST controllers, embedded Tomcat, Jackson (JSON) |
+| Spring Data JPA | Repository layer, Hibernate ORM |
 | H2 Database | In-memory database |
-| Springdoc OpenAPI 2.5.0 | OpenAPI specification and Swagger UI |
-| Lombok | Generates entity getters, setters and other boilerplate |
-| Maven Wrapper | Reproducible Maven commands |
+| Lombok | Boilerplate reduction (available in the project) |
+| Maven (wrapper included) | Build tool |
+| Postman | API testing |
 
-## Project structure
+---
 
-The runnable Maven project is nested inside `crud/crud`.
+## 🏗 Architecture
 
-```text
-SpringBoot_Practice/
-├── README.md
-└── crud/
-    └── crud/
-        ├── pom.xml
-        ├── mvnw
-        ├── mvnw.cmd
-        └── src/
-            ├── main/
-            │   ├── java/com/example/crud/
-            │   │   ├── CrudApplication.java
-            │   │   ├── Controller/
-            │   │   │   └── StudentController.java
-            │   │   ├── Entity/
-            │   │   │   └── Student.java
-            │   │   ├── Repository/
-            │   │   │   └── StudentRepository.java
-            │   │   ├── Services/
-            │   │   │   └── StudentService.java
-            │   │   └── Exceptions/
-            │   │       └── StudentNotFoundException.java
-            │   └── resources/
-            │       └── application.properties
-            └── test/
-                └── java/com/example/crud/
-                    └── CrudApplicationTests.java
+```
+Client (Postman / Browser / Frontend)
+        │  HTTP + JSON
+        ▼
+┌─────────────────────────┐
+│  StudentController      │  Handles HTTP: URLs, JSON, status codes
+└───────────┬─────────────┘
+            ▼
+┌─────────────────────────┐
+│  StudentService         │  Business logic + @Transactional
+└───────────┬─────────────┘
+            ▼
+┌─────────────────────────┐
+│  StudentRepository      │  Data access (Spring Data JPA, auto-generated)
+└───────────┬─────────────┘
+            ▼
+      H2 Database (students table)
 ```
 
-## Architecture
+**Rules followed:** dependencies point downward only (Controller → Service → Repository). The controller never touches the repository directly, and the service contains no HTTP types.
 
-```text
-HTTP client (Swagger UI, curl, Postman, frontend)
-                  |
-                  v
-        StudentController
-       HTTP and JSON handling
-                  |
-                  v
-          StudentService
-          Application logic
-                  |
-                  v
-        StudentRepository
-          Spring Data JPA
-                  |
-                  v
-             H2 database
+---
+
+## 📁 Project Structure
+
+```
+crud/
+├── pom.xml
+├── mvnw / mvnw.cmd                     # Maven wrapper (no Maven install needed)
+└── src/
+    └── main/
+        ├── java/com/example/crud/
+        │   ├── CrudApplication.java            # Entry point (@SpringBootApplication)
+        │   ├── Student.java                    # JPA entity (maps to "students" table)
+        │   ├── StudentPatchRequest.java        # DTO (record) for PATCH
+        │   ├── StudentRepository.java          # JpaRepository interface
+        │   ├── StudentService.java             # Business logic + transactions
+        │   ├── StudentController.java          # REST endpoints
+        │   └── StudentNotFoundException.java   # Custom exception -> HTTP 404
+        └── resources/
+            └── application.properties          # App configuration
 ```
 
-The controller handles HTTP requests, the service coordinates application logic, and the repository performs persistence operations. Keep these responsibilities separate as the project grows.
+---
 
-## Getting started
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- JDK 21 (the version configured in `pom.xml`).
-- Git.
-- An IDE such as IntelliJ IDEA is optional.
+- **JDK 17 or newer** (project tested on JDK 22)
+- **Git**
+- An IDE such as IntelliJ IDEA (optional)
 
-### Clone the repository
-
-```bash
-git clone https://github.com/K-Nishant-18/SpringBoot_Practice.git
-cd SpringBoot_Practice/crud/crud
-```
-
-### Run the application
-
-Linux / macOS:
+### Run locally
 
 ```bash
-./mvnw spring-boot:run
+# 1. Clone the repository
+git clone <https://github.com/K-Nishant-18/SpringBoot_Practice>
+cd crud
+
+# 2. Run the application
+./mvnw spring-boot:run        # Linux / macOS
+mvnw.cmd spring-boot:run      # Windows
 ```
 
-Windows PowerShell / Command Prompt:
+Or open the project in IntelliJ and run `CrudApplication`.
 
-```powershell
-.\mvnw.cmd spring-boot:run
+When you see this in the console, the API is ready:
+
+```
+Tomcat started on port 8080 (http)
+Started CrudApplication in X seconds
 ```
 
-The server is configured to use port `8080`.
+Base URL: **http://localhost:8080**
 
-### Build and test
+### Build a runnable jar
 
 ```bash
-# Run tests
-./mvnw test
-
-# Create the executable jar
 ./mvnw clean package
-
-# Run the packaged application
 java -jar target/crud-0.0.1-SNAPSHOT.jar
 ```
 
-On Windows, use `mvnw.cmd` instead of `./mvnw`.
+---
 
-## Swagger UI and OpenAPI
+## ⚙️ Configuration
 
-After the application starts, open:
+`src/main/resources/application.properties`
 
-- **Swagger UI:** http://localhost:8080/swagger-ui/index.html
-- **OpenAPI JSON:** http://localhost:8080/v3/api-docs
+```properties
+spring.application.name=student-crud
+server.port=8080
 
-Swagger UI lets you inspect the endpoints, review their request and response schemas, and send requests from the browser. OpenAPI JSON is the machine-readable API specification.
+spring.datasource.url=jdbc:h2:mem:studentdb
+spring.datasource.username=sa
+spring.datasource.password=
 
-The documented endpoint group is **Student Management**. Controller methods use OpenAPI annotations such as `@Tag` and `@Operation` to provide readable names and descriptions. Documentation annotations describe endpoints; they do not add request validation or implement new business behavior.
-
-## API reference
-
-Base URL: `http://localhost:8080`  
-Base path: `/api/students`
-
-| Method | Endpoint | Purpose | Success response |
-|---|---|---|---|
-| `POST` | `/api/students` | Create a student | `201 Created` with response body and `Location` header |
-| `GET` | `/api/students` | List all students | `200 OK` with a JSON array |
-| `GET` | `/api/students/{id}` | Retrieve one student | `200 OK` with a JSON object |
-| `PUT` | `/api/students/{id}` | Update a student's name, email and age | `200 OK` with updated object |
-| `PATCH` | `/api/students/{id}` | Update only non-null fields in the request | `200 OK` with updated object |
-| `DELETE` | `/api/students/{id}` | Delete a student | `204 No Content` |
-
-Unknown student IDs result in `404 Not Found` through `StudentNotFoundException`. Other error handling may depend on Spring and database behavior; see Known limitations.
-
-### Student fields
-
-| Field | Type | Behavior |
-|---|---|---|
-| `id` | `Long` | Auto-generated primary key |
-| `name` | `String` | Database column is non-null; maximum length 100 |
-| `email` | `String` | Database column is non-null, unique, maximum length 100 |
-| `age` | `Integer` | Optional |
-
-The entity's database constraints are not the same as request validation. The project does not currently use Bean Validation annotations such as `@NotBlank` or `@Email`.
-
-## Request examples
-
-Use `Content-Type: application/json` for POST, PUT and PATCH requests.
-
-### Create a student
-
-```http
-POST /api/students
-Content-Type: application/json
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
+spring.jpa.open-in-view=false
 ```
 
+| Property | Meaning |
+|---|---|
+| `server.port` | Port Tomcat listens on |
+| `spring.datasource.url` | In-memory H2 database named `studentdb` |
+| `ddl-auto=create-drop` | Tables are created at startup and dropped at shutdown |
+| `show-sql=true` | Prints generated SQL to the console |
+| `open-in-view=false` | Avoids keeping the DB session open for the whole request |
+
+> ⚠️ **Data is not persisted.** The database lives in memory, so all data is lost when the app stops.
+
+### Switching to MySQL (optional)
+
+1. Replace the H2 dependency with `com.mysql:mysql-connector-j` (scope `runtime`).
+2. Update the datasource properties:
+   ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/school
+   spring.datasource.username=root
+   spring.datasource.password=${DB_PASSWORD}
+   spring.jpa.hibernate.ddl-auto=update
+   ```
+3. No Java code changes are needed.
+
+---
+
+## 📡 API Reference
+
+Base path: `/api/students`
+
+| Method | Endpoint | Description | Success | Errors |
+|---|---|---|---|---|
+| `POST` | `/api/students` | Create a student | `201 Created` | `400`, `415`, `500` (duplicate email) |
+| `GET` | `/api/students` | List all students | `200 OK` | - |
+| `GET` | `/api/students/{id}` | Get one student | `200 OK` | `404` |
+| `PUT` | `/api/students/{id}` | Replace a student (send all fields) | `200 OK` | `404`, `500` |
+| `PATCH` | `/api/students/{id}` | Partially update a student | `200 OK` | `404` |
+| `DELETE` | `/api/students/{id}` | Delete a student | `204 No Content` | `404` |
+
+### Student model
+
+| Field | Type | Constraints |
+|---|---|---|
+| `id` | Long | Primary key, auto-generated |
+| `name` | String | Required, max 100 chars |
+| `email` | String | Required, unique |
+| `age` | Integer | Optional |
+
+### Examples
+
+**Create** — `POST /api/students`
 ```json
 {
   "name": "Asha",
@@ -188,28 +195,24 @@ Content-Type: application/json
   "age": 21
 }
 ```
-
-The controller returns `201 Created`, the saved student in the response body, and a `Location` header pointing to the new student resource.
-
-### Get all students
-
-```http
-GET /api/students
+Response `201 Created` (with header `Location: /api/students/1`):
+```json
+{
+  "id": 1,
+  "name": "Asha",
+  "email": "asha@example.com",
+  "age": 21
+}
 ```
 
-### Get one student
-
-```http
-GET /api/students/1
+**Get all** — `GET /api/students`
+```json
+[
+  { "id": 1, "name": "Asha", "email": "asha@example.com", "age": 21 }
+]
 ```
 
-### Update a student (PUT)
-
-```http
-PUT /api/students/1
-Content-Type: application/json
-```
-
+**Update (PUT)** — `PUT /api/students/1` (all fields required)
 ```json
 {
   "name": "Asha Kumari",
@@ -218,34 +221,24 @@ Content-Type: application/json
 }
 ```
 
-The current service assigns all three fields from the request. Send values for all editable fields when using PUT.
-
-### Partially update a student (PATCH)
-
-```http
-PATCH /api/students/1
-Content-Type: application/json
-```
-
+**Partial update (PATCH)** — `PATCH /api/students/1` (only the fields to change)
 ```json
 {
   "age": 25
 }
 ```
 
-The service updates only fields whose values are non-null. With the current entity-based request, an omitted field and an explicitly supplied `null` are indistinguishable, so PATCH cannot explicitly clear a field to null.
+**Delete** — `DELETE /api/students/1` → `204 No Content` (empty body)
 
-### Delete a student
+### PUT vs PATCH
 
-```http
-DELETE /api/students/1
-```
+| | PUT | PATCH |
+|---|---|---|
+| Meaning | Replace the whole resource | Change only some fields |
+| Body | All fields | Only the fields to change |
+| Idempotent | Yes | Not guaranteed |
 
-A successful deletion returns `204 No Content` and an empty response body.
-
-## Quick testing with curl
-
-Run the application first, then execute these commands. They use the same local API base URL.
+### cURL quick test
 
 ```bash
 # Create
@@ -253,19 +246,12 @@ curl -i -X POST http://localhost:8080/api/students \
   -H "Content-Type: application/json" \
   -d '{"name":"Asha","email":"asha@example.com","age":21}'
 
-# List all
-curl -i http://localhost:8080/api/students
+# Read all / one
+curl http://localhost:8080/api/students
+curl http://localhost:8080/api/students/1
 
-# Fetch student ID 1
-curl -i http://localhost:8080/api/students/1
-
-# Update
-curl -i -X PUT http://localhost:8080/api/students/1 \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Asha Kumari","email":"asha@example.com","age":22}'
-
-# Partially update
-curl -i -X PATCH http://localhost:8080/api/students/1 \
+# Patch
+curl -X PATCH http://localhost:8080/api/students/1 \
   -H "Content-Type: application/json" \
   -d '{"age":25}'
 
@@ -273,70 +259,92 @@ curl -i -X PATCH http://localhost:8080/api/students/1 \
 curl -i -X DELETE http://localhost:8080/api/students/1
 ```
 
-For a Windows shell that does not support Unix-style line continuations, run each command on one line or use PowerShell's backtick continuation syntax.
+---
 
-## Configuration
+## 🧪 Testing with Postman
 
-The application configuration lives in `src/main/resources/application.properties`:
+1. Create a collection named **Student CRUD** with a variable `baseUrl = http://localhost:8080`.
+2. For `POST`, `PUT` and `PATCH`: **Body → raw → JSON** (this sets `Content-Type: application/json`).
+3. Test the happy paths first, then the error cases:
 
-```properties
-spring.application.name=student-crud
-server.port=8080
-
-spring.datasource.url=jdbc:h2:mem:studentdb
-spring.jpa.hibernate.ddl-auto=create-drop
-spring.jpa.show-sql=true
-```
-
-| Setting | Meaning |
+| Scenario | Expected |
 |---|---|
-| `server.port=8080` | Runs the web server on port 8080 |
-| `jdbc:h2:mem:studentdb` | Uses an in-memory H2 database |
-| `ddl-auto=create-drop` | Creates schema on startup and drops it when the application shuts down |
-| `show-sql=true` | Prints SQL statements to the application console |
+| `GET /api/students/99` | `404` |
+| `DELETE /api/students/99` | `404` |
+| POST without JSON content type | `415` |
+| POST with malformed JSON | `400` |
+| `GET /api/students/abc` | `400` |
+| POST the same email twice | `500` (see limitations) |
 
-**Data is temporary.** The in-memory database is recreated when the application restarts, and records are not retained.
+---
 
-## Key Spring concepts demonstrated
+## 🧠 Key Concepts Used
 
-- `@SpringBootApplication` and component scanning.
-- `@RestController`, `@RequestMapping`, `@GetMapping`, `@PostMapping`, `@PutMapping`, `@PatchMapping`, and `@DeleteMapping`.
-- Constructor-based dependency injection.
-- JPA entity mapping with `@Entity`, `@Id`, `@GeneratedValue`, and `@Column`.
-- Spring Data `JpaRepository`.
-- Transaction demarcation with `@Transactional`.
-- Entity updates via JPA dirty checking within a transaction.
-- Exception-to-HTTP mapping with `@ResponseStatus`.
-- OpenAPI documentation with Springdoc and Swagger UI.
+| Concept | Where |
+|---|---|
+| `@SpringBootApplication` (auto-configuration + component scan) | `CrudApplication` |
+| `@Entity`, `@Id`, `@GeneratedValue`, `@Column` | `Student` |
+| Spring Data JPA derived repository (no implementation class) | `StudentRepository` |
+| Constructor injection (no `@Autowired` needed for a single constructor) | Service and Controller |
+| `@Transactional` and `readOnly = true` | `StudentService` |
+| **Dirty checking** (updates without calling `save()`) | `update` and `patch` |
+| `Optional.orElseThrow` | `getById` |
+| `@ResponseStatus` on an exception → HTTP 404 | `StudentNotFoundException` |
+| `@RestController`, `@RequestMapping`, `@PathVariable`, `@RequestBody` | `StudentController` |
+| `ResponseEntity.created(...)` for `201` + `Location` header | `create` endpoint |
+| Java `record` as a DTO | `StudentPatchRequest` |
 
-## Known limitations and next improvements
+---
 
-This is a learning project. Important gaps to address before production use:
+## ⚠️ Known Limitations
 
-- **No Bean Validation:** add request DTOs with `@NotBlank`, `@Email`, `@Size`, and `@Valid`.
-- **Duplicate-email errors are not mapped to a deliberate client error:** translate unique-constraint violations to a consistent response such as `409 Conflict`.
-- **PATCH uses the entity as its request body:** use a dedicated patch DTO to define updateable fields and, if needed, support explicitly clearing values.
-- **Entities are returned directly:** consider separate request and response DTOs.
-- **No pagination or sorting:** `GET /api/students` returns every student.
+This is a learning project, so some production concerns are intentionally left out:
+
+- **Entities are exposed directly** in the API. Real projects should use DTOs.
+- **No validation** (`@Valid`, `@NotBlank`, `@Email`). Empty names are accepted.
+- **Duplicate email returns `500`** instead of `409 Conflict`.
+- **PATCH cannot set a field to `null`** (`null` means "not sent").
+- **No pagination**; `GET /api/students` returns everything.
 - **No authentication or authorization.**
-- **Only basic generated test scaffolding is present:** add service and controller tests.
-- **In-memory persistence:** use a persistent database for data that must survive restarts.
-- **Duplicate dependencies in the current POM:** H2 and Spring Boot Test are each declared twice; remove duplicates as a cleanup.
+- **No automated tests** beyond the generated context-load test.
+- **In-memory database**, so data is lost on restart.
 
-## Troubleshooting
+---
 
-| Issue | What to check |
+## 🗺 Roadmap
+
+- [ ] DTOs for request and response (stop exposing entities)
+- [ ] Bean Validation with `@Valid`
+- [ ] Global exception handling with `@RestControllerAdvice` (consistent JSON errors)
+- [ ] `409 Conflict` for duplicate emails
+- [ ] Pagination and sorting with `Pageable`
+- [ ] Search and filtering (e.g. by name)
+- [ ] MySQL/PostgreSQL with `dev` and `prod` profiles + Flyway migrations
+- [ ] Unit tests (Mockito) and slice tests (`@WebMvcTest`, `@DataJpaTest`)
+- [ ] Swagger/OpenAPI documentation
+- [ ] Dockerfile and docker-compose
+- [ ] Spring Security with JWT
+
+---
+
+## 🩺 Troubleshooting
+
+| Problem | Fix |
 |---|---|
-| Port 8080 is occupied | Stop the other process or change `server.port`. |
-| Swagger UI does not load | Confirm the application started and the Springdoc starter is present; inspect startup logs. |
-| API returns `415 Unsupported Media Type` | Send `Content-Type: application/json` with JSON request bodies. |
-| A student ID returns `404` | Confirm the ID exists; the in-memory database starts empty. |
-| Data disappears after restart | Expected with `jdbc:h2:mem:studentdb`. |
-| Java version error | Use JDK 21, matching `java.version` in `pom.xml`. |
+| `Port 8080 was already in use` | Stop the other app or change `server.port` |
+| `Unsupported class file major version` | Make sure `java.version` in `pom.xml` matches your JDK |
+| `415 Unsupported Media Type` | Send header `Content-Type: application/json` |
+| All fields are `null` in the controller | Missing `@RequestBody` or wrong content type |
+| Update doesn't persist | Check `@Transactional` is present on the service method |
+| `HikariPool ... Thread starvation or clock leap` warning | Harmless; caused by the laptop sleeping or long idle time |
 
-## Author
+Tip: when a stack trace is long, read the **last `Caused by`** line first.
 
-**Kumar Nishant**  
-GitHub: [K-Nishant-18](https://github.com/K-Nishant-18)
+---
 
-If this project helps you learn Spring Boot, feel free to ⭐ the repository.
+## 👤 Author
+
+**Kumar Nishant**
+Full Stack Developer (Java, Spring Boot, JavaScript, MySQL) — Bhagalpur, Bihar
+
+⭐ If this project helped you learn Spring Boot, consider giving it a star!
