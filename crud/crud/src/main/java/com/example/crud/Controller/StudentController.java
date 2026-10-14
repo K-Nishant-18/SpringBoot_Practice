@@ -3,6 +3,7 @@ package com.example.crud.Controller;
 
 import com.example.crud.Entity.Student;
 import com.example.crud.Services.StudentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +38,15 @@ public class StudentController {
         return studentService.getById(id);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public Student update(@PathVariable Long id, @RequestBody Student student){
         return studentService.update(id, student);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id){
+        studentService.delete(id);
     }
 
 
