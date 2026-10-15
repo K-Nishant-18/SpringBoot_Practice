@@ -1,13 +1,12 @@
-package com.example.crud.Controller;
+package com.example.crud.controller;
 
 
-import com.example.crud.Entity.Student;
-import com.example.crud.Services.StudentService;
+import com.example.crud.entity.Student;
+import com.example.crud.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;

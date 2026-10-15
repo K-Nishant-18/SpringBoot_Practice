@@ -1,8 +1,8 @@
-package com.example.crud.Services;
+package com.example.crud.services;
 
-import com.example.crud.Entity.Student;
-import com.example.crud.Exceptions.StudentNotFoundException;
-import com.example.crud.Repository.StudentRepository;
+import com.example.crud.entity.Student;
+import com.example.crud.exceptions.StudentNotFoundException;
+import com.example.crud.repository.StudentRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +42,7 @@ public class StudentService {
         return existing;
     }
 
+    @Transactional
     public Student patch(Long id, Student incomming){
         Student existing = getById(id);
 
