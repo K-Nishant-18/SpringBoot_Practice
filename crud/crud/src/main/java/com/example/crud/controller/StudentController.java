@@ -1,10 +1,15 @@
 package com.example.crud.controller;
 
 
+import com.example.crud.dto.CreateStudentRequest;
+import com.example.crud.dto.PatchStudentRequest;
+import com.example.crud.dto.StudentResponse;
+import com.example.crud.dto.UpdateStudentRequest;
 import com.example.crud.entity.Student;
 import com.example.crud.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +36,17 @@ public class StudentController {
             summary = "Create a new student",
             description = "Creates a student record and returns the saved student."
     )
+//    @PostMapping
+//    public ResponseEntity<Student> create(@RequestBody Student student){
+//        Student saved = studentService.create(student);
+//        URI location = URI.create("/api/students/" + saved.getId());
+//        return  ResponseEntity.created(location).body(saved);
+//    }
     @PostMapping
-    public ResponseEntity<Student> create(@RequestBody Student student){
-        Student saved = studentService.create(student);
-        URI location = URI.create("/api/students/" + saved.getId());
-        return  ResponseEntity.created(location).body(saved);
+    public ResponseEntity<StudentResponse> create(@Valid @RequestBody CreateStudentRequest request){
+        StudentResponse saved = studentService.create((request));
+        URI location = URI.create("/api/students/" + saved.id());
+        return ResponseEntity.created(location).body(saved);
     }
 
 
@@ -44,8 +55,12 @@ public class StudentController {
             summary = "Get all students",
             description = "Retrieves all student records from the database."
     )
+//    @GetMapping
+//    public List<Student> getAll(){
+//        return studentService.getAll();
+//    }
     @GetMapping
-    public List<Student> getAll(){
+    public List<StudentResponse> getAll(){
         return studentService.getAll();
     }
 
@@ -55,8 +70,12 @@ public class StudentController {
             summary = "Get a student by ID",
             description = "Retrieves a single student using their unique ID."
     )
+//    @GetMapping("/{id}")
+//    public Student getById(@PathVariable Long id){
+//        return studentService.getById(id);
+//    }
     @GetMapping("/{id}")
-    public Student getById(@PathVariable Long id){
+    public StudentResponse getById(@PathVariable Long id){
         return studentService.getById(id);
     }
 
@@ -66,9 +85,13 @@ public class StudentController {
             summary = "Update a student",
             description = "Updates the student's name, email and age."
     )
+//    @PutMapping("/{id}")
+//    public Student update(@PathVariable Long id, @RequestBody Student student){
+//        return studentService.update(id, student);
+//    }
     @PutMapping("/{id}")
-    public Student update(@PathVariable Long id, @RequestBody Student student){
-        return studentService.update(id, student);
+    public StudentResponse update(@PathVariable Long id, @Valid  @RequestBody UpdateStudentRequest response){
+        return studentService.update(id, response);
     }
 
 
@@ -77,9 +100,13 @@ public class StudentController {
             summary = "Partially update a student",
             description = "Updates only the non-null fields supplied in the request."
     )
+//    @PatchMapping("/{id}")
+//    public Student patch(@PathVariable Long id, @RequestBody Student student){
+//        return studentService.patch(id, student);
+//    }
     @PatchMapping("/{id}")
-    public Student patch(@PathVariable Long id, @RequestBody Student student){
-        return studentService.patch(id, student);
+    public StudentResponse patch(@PathVariable Long id, @Valid @RequestBody PatchStudentRequest request){
+        return studentService.patch(id, request);
     }
 
 
@@ -88,9 +115,14 @@ public class StudentController {
             summary = "Delete a student",
             description = "Deletes a student record using its unique ID."
     )
+//    @DeleteMapping("/{id}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void delete(@PathVariable Long id){
+//        studentService.delete(id);
+//    }
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id){
+    public void  delete(@PathVariable Long id){
         studentService.delete(id);
     }
 
